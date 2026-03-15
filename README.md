@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Life Makers - Beni Suef Branch OS
 
-## Getting Started
+An MVP implementation of the comprehensive branch operating system and public website for the "Sonnaa Al Hayah / Life Makers - Beni Suef" branch.
 
-First, run the development server:
+## Features Built
+- **Public Portal (Arabic/RTL)**: Hero landing page, Volunteer application form, Beneficiary Request Assistance form.
+- **Authentication**: Secure role-based login using NextAuth.js (Auth.js v5 beta) with credentials provider.
+- **Internal Dashboard**: Metrics overview including total cases, intake requests, and volunteers.
+- **Case Management Core**: Intake requests listing and detailed view. Includes a "Convert to Case" processor that normalizes data into Person, Household, and Case entities. Table list view for the unified Cases pipeline.
+- **Volunteer CRM**: Administration table to view volunteer profiles and count of applications submitted.
+- **Programs & Projects**: Admin dashboard for listing and mapping development programs.
+- **Branch Settings**: CMS capabilities mapping Branch display names, addresses, phones, and donation channels to the database for dynamic updates.
 
+## Technical Stack
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Database ORM**: Prisma
+- **Database**: PostgreSQL (Locally accessible via standard port or Docker Compose)
+- **Styling**: Tailwind CSS & shadcn/ui
+- **Auth**: Auth.js (NextAuth beta)
+
+## Quick Start (Local Setup)
+
+### 1. Database Setup
+Ensure PostgreSQL is running on your machine.
+If you have Docker installed, you can spin up the DB using:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker-compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Variables
+Copy the `.env.example` into `.env` and adjust the PostgreSQL connection string.
+```bash
+cp .env.example .env
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Install Dependencies
+```bash
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Database Schema & Seeding
+This will push the Prisma schema to your database and generate the Prisma Client, avoiding Prisma version mismatches with Next.js 15:
+```bash
+npx prisma db push
+npx prisma generate
+```
 
-## Learn More
+Seed the initial Branch and Demo User data:
+```bash
+npx tsx prisma/seed.ts
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Start Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Demo Credentials
+After running the seed script, you can log in to the dashboard (`/login`) using the following demo account:
+- **Email**: `admin@bns.life`
+- **Password**: `password123`
+- **Role**: `SUPER_ADMIN`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Assumptions Made
+- Email / Password was utilized for MVP since SSO credentials were not provided.
+- Next.js 16/15 compatibility was ensured by maintaining a strict Prisma v5 version explicitly, bypassing breaking connection string changes in Prisma 7.
+- A "Convert to Case" shortcut algorithm was used for Beneficiary Intakes to auto-generate the associated Person and Household records for the sake of the MVP workflow demonstration.
+- The `shadowcn/ui` button component was modified manually to a generic utility layer so that Server Components remain safe avoiding React Context boundary errors on `asChild`.
